@@ -75,12 +75,17 @@ By structuring the database with separate tables for **jobs** and **companies**,
 ## Next Steps
 - [ ] **Create GitHub repository** ✅
 - [ ] **Set up Snowflake database** ✅
-- [ ] **Write the first web scraper for BuiltIn** 🔄
-- [ ] **Store scraped data in Snowflake** 🔄
+- [ ] **Write the first web scraper for BuiltIn** ✅
+- [ ] **Write the second web scraper for LinkedIn** 🔄
+- [ ] **Store scraped data in Snowflake** ✅
 - [ ] **Automate scraping and scheduling** 🔄
 
 ## Future Enhancements
 - Implement **dbt models** for transforming job data
+- Use AWS Lambda to run queries
+- Store data in AWS S3 bucket
+- Load data back into snowflake (parquet?)
+- Feature to upload resume, have ChatGPT write Cover Letters tailored to the position automatically
 - Build **dashboards** to visualize trends (salary insights, hiring patterns)
 - Automate **CI/CD checks** with GitHub Actions
 - SQLFluff code rules in CI
