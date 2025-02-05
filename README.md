@@ -82,6 +82,7 @@ By structuring the database with separate tables for **jobs** and **companies**,
 
 ## Future Enhancements
 - Implement **dbt models** for transforming job data
+- Create develop branch for PRs rather than pushing directly to main ✅
 - Use AWS Lambda to run queries
 - Store data in AWS S3 bucket
 - Load data back into snowflake (parquet?)
