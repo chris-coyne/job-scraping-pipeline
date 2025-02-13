@@ -4,7 +4,7 @@
 This project is focused on scraping, storing, and analyzing job postings for remote **Data Analyst, Senior Data Analyst, Analytics Engineer, and Senior Analytics Engineer** roles. The goal is to build a complete data pipeline that extracts job postings from **LinkedIn** and **BuiltIn**, processes the data, and visualizes trends.
 
 ## Tech Stack
-- **Python** (Scrapy, BeautifulSoup, Selenium/Playwright for web scraping)
+- **Python** (BeautifulSoup, Selenium/Playwright for web scraping)
 - **Snowflake** (Cloud-based data warehouse for scalable storage and querying)
 - **dbt** (Data modeling and transformation)
 - **GitHub Actions** (CI/CD for SQL linting and automation)
@@ -37,11 +37,20 @@ job-scraping-pipeline/
 │── config/          # Credentials (excluded via .gitignore)
 ```
 
+## AWS Lambda
+After written and tested locally, the scraper .py files were converted to zip files to be used within AWS Lambda. This function writes .json to an S3 bucket daily with three outputs: a job_postings daily output with job search results, an all_jobs output combining the results of the daily job_postings files (while removing any duplicates), and a companies file tracking each company and ID. The script only saves the prior 14 days worth of runs, limiting stale postings and an ever-growing output in the S3 bucket and all_jobs file. 
+
+### IAM
+Role created for lambda function to grant read/write permissions to S3 bucket.
+
+### Scheduling Setup
+Lambda function is scheduled to run daily at 9am cental with AWS Event Bridge.
+
 ## Database Setup
-Job postings will be stored in **Snowflake**, a cloud-based data warehouse that provides high scalability and performance for analytical workloads.
+Job postings will be stored in **Snowflake**, a cloud-based data warehouse that provides high scalability and performance for analytical workloads. Decided on Snowflake over a lower-cost, local solution like Postgres due to popularity. I wanted a database used by many startups, was cloud-based, and could be integrated with other tooling like AWS and visualization software. 
 
 ### Snowflake Table Schema:
-To facilitate better data modeling and transformations in **dbt**, we will use a multi-table structure:
+To facilitate better data modeling and transformations in **dbt**, I will use a multi-table structure:
 
 #### `jobs` Table
 ```sql
@@ -70,7 +79,13 @@ CREATE TABLE companies (
 );
 ```
 
-By structuring the database with separate tables for **jobs** and **companies**, we can use **dbt** to join and transform the data efficiently.
+By structuring the database with separate tables for **jobs** and **companies**, and by source (Built In, LinkedIn) I can use **dbt** to join and transform the data efficiently.
+
+### Snowflake AWS Access
+Role created for Snowflake to grant read permissions to S3 bucket.
+
+### Secrets Manager
+Secret created for Snowflake S3 access credentials.
 
 ## Next Steps
 - [✅] **Create GitHub repository**
@@ -91,8 +106,11 @@ By structuring the database with separate tables for **jobs** and **companies**,
 - [ ] Build **dashboards** to visualize trends (salary insights, hiring patterns)
 - [ ] Automate **CI/CD checks** with GitHub Actions
 - [ ] **SQLFluff code rules in CI**
+- [ ] **Logging with Cloudwatch**
 
 ---
 ### **Contributions & Feedback**
 This project is a learning experience in data engineering and analytics. Any suggestions or feedback are welcome!
 
+### **Decision Making Notes**
+- When creating a zip to upload to AWS Lambda...Create package folder in root of project...Activate virtual environment...pip install -r requirements.txt --target package/...cp lambda_function.py package/
