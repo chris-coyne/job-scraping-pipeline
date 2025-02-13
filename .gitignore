@@ -1,1 +1,3 @@
 lambda_functions/builtin_scraper_lambda_package
+package/
+venv/
