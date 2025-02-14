@@ -1,0 +1,46 @@
+
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: 'dbt_scraper'
+version: '1.0.0'
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'dbt_models'
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+# In this example config, we tell dbt to build all models in the example/
+# directory as views. These settings can be overridden in the individual model
+# files using the `{{ config(...) }}` macro.
+models:
+  job_scraping:
+    raw:
+      +schema: raw
+      +materialized: view  # Raw data is usually just a reference; view (no transformation)
+    staging:
+      +schema: staging
+      +materialized: incremental  # Staging models should be incremental; incremental (only updates new records)
+      +unique_key: "id"
+    intermediate:
+      +schema: intermediate
+      +materialized: table  # Intermediate tables should be persisted; table (persisted transformations)
+    marts:
+      +schema: marts
+      +materialized: table  # Final analytics tables; table (business-ready data)
