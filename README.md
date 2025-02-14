@@ -47,7 +47,7 @@ Role created for lambda function to grant read/write permissions to S3 bucket.
 Lambda function is scheduled to run daily at 9am cental with AWS Event Bridge.
 
 ## Database Setup
-Job postings will be stored in **Snowflake**, a cloud-based data warehouse that provides high scalability and performance for analytical workloads. Decided on Snowflake over a lower-cost, local solution like Postgres due to popularity. I wanted a database used by many startups, was cloud-based, and could be integrated with other tooling like AWS and visualization software. 
+Job postings will be stored in **Snowflake**, a cloud-based data warehouse that provides high scalability and performance for analytical workloads. Decided on Snowflake over a lower-cost, local solution like Postgres due to popularity. I wanted a cloud-based database used by many startups, and that could be integrated with other tooling like AWS and visualization software. 
 
 ### Snowflake Table Schema:
 To facilitate better data modeling and transformations in **dbt**, I will use a multi-table structure:
@@ -93,15 +93,15 @@ Secret created for Snowflake S3 access credentials.
 - [✅] **Write the first web scraper for BuiltIn**
 - [🔄] **Write the second web scraper for LinkedIn** 
 - [✅] **Store scraped data in Snowflake**
-- [🔄] **Automate scraping and scheduling** 
+- [✅] **Automate scraping and scheduling** 
 
 ## Future Enhancements
-- [ ] Implement **dbt models** for transforming job data
+- [🔄] Implement **dbt models** for transforming job data
 - [✅] **Create develop branch for PRs rather than pushing directly to main**
 - [✅] **Use AWS Lambda to run queries**
 - [✅] **Store data in AWS S3 bucket**
 - [✅] **Load data back into snowflake (parquet?)**
-          - Decided on json load to snowflake. If I were using more AWS services like Athena or Redshift I would convert to parquet with AWS Glue prior to Snowflake
+          - Decided on json load to snowflake. If I were using more AWS services like Athena or Redshift I would convert to parquet with AWS Glue prior to Snowflake.
 - [ ] **Feature to upload resume, have ChatGPT write Cover Letters tailored to the position automatically**
 - [ ] Build **dashboards** to visualize trends (salary insights, hiring patterns)
 - [ ] Automate **CI/CD checks** with GitHub Actions
@@ -113,4 +113,26 @@ Secret created for Snowflake S3 access credentials.
 This project is a learning experience in data engineering and analytics. Any suggestions or feedback are welcome!
 
 ### **Decision Making Notes**
+
+**Lambda Packaging**
 - When creating a zip to upload to AWS Lambda...Create package folder in root of project...Activate virtual environment...pip install -r requirements.txt --target package/...cp lambda_function.py package/
+
+**Snowflake Connection to S3 Bucket**
+- Created an S3 integration in snowflake
+- Updated IAM role trust relationship for snowflake
+- Created an external stage in snowflake for the S3 integration
+
+**DBT Setup**
+- Created python env dbt_env
+- pip install dbt-snowflake
+- dbt init dbt_models to setup dbt structure
+- setup .dbt/profiles.yml
+- Created new snowflake role for dbt
+- dbt debug successful connection
+- From cd job-scraping-python, run dbt_env (pip installed dbt in) by dbt_env/Scripts/Activate (deactivate to exit)
+- Setup model structure in dbt_project.yml
+
+
+Next Up:
+- only keep prehook for raw_companies table..parsed shouldn't also go into raw, probably staging
+- schedule dbt run?
