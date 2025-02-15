@@ -29,33 +29,16 @@ clean-targets:         # directories to be removed by `dbt clean`
 # In this example config, we tell dbt to build all models in the example/
 # directory as views. These settings can be overridden in the individual model
 # files using the `{{ config(...) }}` macro.
+
 models:
-  job_scraping:
+  dbt_scraper:
     raw:
       +schema: raw
-
-      #Only need below if I want to define unique keys at a schema level, 
-      #if they are at model level they live in model config. Model config overrides dbt_project config
-
-      #+materialized: incremental
-      #+on_schema_change: "append"
-
-      #companies:
-        #+unique_key: "id"
-      #jobs:
-       # +unique_key: "job_url"
-      
-
     staging:
       +schema: staging
-      #+materialized: incremental
-      #+unique_key: "id"
-      #+on_schema_change: "append"
-
     intermediate:
       +schema: intermediate
       +materialized: table
-
     marts:
       +schema: marts
       +materialized: table
