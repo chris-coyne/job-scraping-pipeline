@@ -1,54 +1,34 @@
 {{ config(
-    materialized='incremental',
-    unique_key='job_url',
-    on_schema_change='append'
+    materialized = 'incremental',
+    unique_key   = 'root_string',
+    on_schema_change = 'append'
 ) }}
 
 WITH source_lines AS (
-    -- 1) Select each line from the Snowflake stage as a string
+    -- 1) Read each line from the Snowflake stage.
     SELECT $1 AS raw_line
-    FROM @job_stage/job_postings/builtin/latest_jobs.json
+    FROM @JOB_SCRAPING.RAW.JOB_STAGE/job_postings/builtin/latest_jobs.json
+
 ),
 
 parsed AS (
-    -- 2) Parse each line into a JSON array or object
-    SELECT parse_json(raw_line) AS root
-    FROM source_lines
-),
-
-flattened AS (
-    -- 3) Flatten the JSON array (each job posting) into separate rows
+    -- 2) Parse each line into JSON, skip blank lines
     SELECT
-        parse_json(j.value):company_id::int             AS company_id,
-        parse_json(j.value):date_added::timestamp_ntz   AS date_added,
-        parse_json(j.value):job_description::string     AS job_description,
-        parse_json(j.value):job_title::string           AS job_title,
-        parse_json(j.value):job_url::string             AS job_url,
-        parse_json(j.value):level::string               AS level,
-        parse_json(j.value):location::string            AS location,
-        parse_json(j.value):salary::string              AS salary,
-        parse_json(j.value):searched_job_title::string  AS searched_job_title,
-        parse_json(j.value):source::string              AS source
-    FROM parsed,
-         LATERAL FLATTEN(input => parsed.root) j
+        parse_json(raw_line) AS root,
+        to_varchar(parse_json(raw_line)) AS root_string
+    FROM source_lines
+    WHERE parse_json(raw_line) IS NOT NULL
 
     {% if is_incremental() %}
-    -- 4) Only load rows where the job_url is not already in the target table
-    WHERE parse_json(j.value):job_url::string NOT IN (
-        SELECT job_url FROM {{ this }}
-    )
+      -- Only insert lines that haven't been loaded (based on our root_string)
+      AND to_varchar(parse_json(raw_line)) NOT IN (
+          SELECT root_string FROM {{ this }}
+      )
     {% endif %}
 )
 
+-- 3) Final SELECT: store one row per raw JSON line, plus a string key for incremental merges
 SELECT
-    company_id,
-    date_added,
-    job_description,
-    job_title,
-    job_url,
-    level,
-    location,
-    salary,
-    searched_job_title,
-    source
-FROM flattened
+    root,
+    root_string
+FROM parsed

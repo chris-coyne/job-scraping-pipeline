@@ -120,7 +120,7 @@ This project is a learning experience in data engineering and analytics. Any sug
 **Snowflake Connection to S3 Bucket**
 - Created an S3 integration in snowflake
 - Updated IAM role trust relationship for snowflake
-- Created an external stage in snowflake for the S3 integration
+- Created an external stage in snowflake for the S3 integration - pointed to raw schema since that is only schema ingesting from Snowflake
 
 **DBT Setup**
 - Created python env dbt_env
@@ -131,6 +131,7 @@ This project is a learning experience in data engineering and analytics. Any sug
 - dbt debug successful connection
 - From cd job-scraping-python, run dbt_env (pip installed dbt in) by dbt_env/Scripts/Activate (deactivate to exit)
 - Setup model structure in dbt_project.yml
+- profiles.yml default schema was raw, so every dbt run output into snowflake raw schema. Created generate_schema_names.sql jinja to override this behavior. Not sure if necessary, project.yml error was found, but don't think it hurts anything.
 
 
 Next Up:
@@ -139,6 +140,24 @@ Next Up:
 - Redo model structure based on dbt best practices
 - For raw models, is there a better way to read in S3 bucket than source lines and parsed CTEs?
 - Eventually move model configs into dbt_project.yml for multiple sources (LinkedIn)
+- Add run timestamp to models
 
 References
 https://docs.getdbt.com/best-practices/how-we-structure/1-guide-overview
+
+
+Model configs 
+      #Only need below if I want to define unique keys at a schema level, 
+      #if they are at model level they live in model config. Model config overrides dbt_project config
+
+      #+materialized: incremental
+      #+on_schema_change: "append"
+
+      #companies:
+        #+unique_key: "id"
+      #jobs:
+       # +unique_key: "job_url"
+
+        #+materialized: incremental
+        #+unique_key: "id"
+        #+on_schema_change: "append"
