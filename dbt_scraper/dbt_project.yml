@@ -8,7 +8,7 @@ version: '1.0.0'
 # This setting configures which "profile" dbt uses for this project.
 profile: 'dbt_models'
 
-# These configurations specify where dbt should look for different types of files.
+# These configurations specify where dbt should look for different types of files.de
 # The `model-paths` config, for example, states that models in this project can be
 # found in the "models/" directory. You probably won't need to change these!
 model-paths: ["models"]
@@ -33,14 +33,29 @@ models:
   job_scraping:
     raw:
       +schema: raw
-      +materialized: view  # Raw data is usually just a reference; view (no transformation)
+
+      #Only need below if I want to define unique keys at a schema level, 
+      #if they are at model level they live in model config. Model config overrides dbt_project config
+
+      #+materialized: incremental
+      #+on_schema_change: "append"
+
+      #companies:
+        #+unique_key: "id"
+      #jobs:
+       # +unique_key: "job_url"
+      
+
     staging:
       +schema: staging
-      +materialized: incremental  # Staging models should be incremental; incremental (only updates new records)
-      +unique_key: "id"
+      #+materialized: incremental
+      #+unique_key: "id"
+      #+on_schema_change: "append"
+
     intermediate:
       +schema: intermediate
-      +materialized: table  # Intermediate tables should be persisted; table (persisted transformations)
+      +materialized: table
+
     marts:
       +schema: marts
-      +materialized: table  # Final analytics tables; table (business-ready data)
+      +materialized: table
