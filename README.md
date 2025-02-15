@@ -134,5 +134,11 @@ This project is a learning experience in data engineering and analytics. Any sug
 
 
 Next Up:
-- only keep prehook for raw_companies table..parsed shouldn't also go into raw, probably staging
+- [✅] only keep prehook for raw_companies table..parsed shouldn't also go into raw, probably staging
 - schedule dbt run?
+- Redo model structure based on dbt best practices
+- For raw models, is there a better way to read in S3 bucket than source lines and parsed CTEs?
+- Eventually move model configs into dbt_project.yml for multiple sources (LinkedIn)
+
+References
+https://docs.getdbt.com/best-practices/how-we-structure/1-guide-overview
