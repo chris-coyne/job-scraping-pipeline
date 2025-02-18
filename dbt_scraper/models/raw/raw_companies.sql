@@ -30,5 +30,6 @@ parsed AS (
 
 SELECT
     root,
-    root_string
+    root_string,
+    current_timestamp() as dbt_loaded_at
 FROM parsed

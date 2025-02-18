@@ -30,5 +30,6 @@ parsed AS (
 -- 3) Final SELECT: store one row per raw JSON line, plus a string key for incremental merges
 SELECT
     root,
-    root_string
+    root_string,
+    current_timestamp() as dbt_loaded_at
 FROM parsed

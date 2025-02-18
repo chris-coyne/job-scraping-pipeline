@@ -46,5 +46,6 @@ SELECT
     location,
     salary,
     searched_job_title,
-    source
+    source,
+    current_timestamp() as dbt_loaded_at
 FROM flattened
