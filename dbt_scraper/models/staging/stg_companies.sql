@@ -26,5 +26,6 @@ flattened AS (
 
 SELECT
     id,
-    company_name
+    company_name,
+    current_timestamp() as dbt_loaded_at
 FROM flattened

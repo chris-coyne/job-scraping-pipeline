@@ -140,7 +140,7 @@ Next Up:
 - Redo model structure based on dbt best practices
 - For raw models, is there a better way to read in S3 bucket than source lines and parsed CTEs?
 - Eventually move model configs into dbt_project.yml for multiple sources (LinkedIn)
-- Add run timestamp to models
+- [✅] Add run timestamp to models
 
 References
 https://docs.getdbt.com/best-practices/how-we-structure/1-guide-overview
