@@ -24,7 +24,7 @@ jobs:
       - name: Configure dbt profiles
         run: |
           mkdir -p ~/.dbt
-          echo "${{ secrets.DBT_PROFILES_YML }}" > ~/.dbt/profiles.yml
+          echo "${{ secrets.DBT_PROFILES_YML }}" | sed 's/\r$//' > ~/.dbt/profiles.yml
 
       - name: Debug dbt profiles
         run: cat ~/.dbt/profiles.yml
