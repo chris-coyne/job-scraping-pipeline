@@ -133,10 +133,16 @@ This project is a learning experience in data engineering and analytics. Any sug
 - Setup model structure in dbt_project.yml
 - profiles.yml default schema was raw, so every dbt run output into snowflake raw schema. Created generate_schema_names.sql jinja to override this behavior. Not sure if necessary, project.yml error was found, but don't think it hurts anything.
 
+**Scheduling DBT**
+- Looked into using Airflow, DBT Cloud, Prefect, and Github Actions for scheduling. For this small of a project, Github Actions is the easiest to set up.
+- Created a workflow in .github/workflows/dbt_schedule.yml -- runs daily at 8am CST
+- Added DBT_PROFILES_YML, DBT_USER, DBT_PASSWORD, DBT_ACCOUNT, DBT_DATABASE, DBT_SCHEMA to secrets in GitHub repo.
+
 
 Next Up:
 - [✅] only keep prehook for raw_companies table..parsed shouldn't also go into raw, probably staging
-- schedule dbt run?
+- Schedule dbt run
+- Email notification on failure
 - Redo model structure based on dbt best practices
 - For raw models, is there a better way to read in S3 bucket than source lines and parsed CTEs?
 - Eventually move model configs into dbt_project.yml for multiple sources (LinkedIn)
