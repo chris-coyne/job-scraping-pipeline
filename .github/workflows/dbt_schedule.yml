@@ -1,0 +1,43 @@
+name: Run dbt models on schedule
+
+on:
+  schedule:
+    - cron: '0 14 * * *'  # Runs daily at 8 AM CST (14:00 UTC)
+  workflow_dispatch:  # Allows manual triggering from GitHub UI
+
+jobs:
+  run-dbt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dbt
+        run: |
+          pip install dbt-core dbt-snowflake
+
+      - name: Configure dbt profiles
+        run: |
+          mkdir -p ~/.dbt
+          echo "$DBT_PROFILES_YML" > ~/.dbt/profiles.yml
+
+      - name: Run dbt models
+        run: dbt run --profiles-dir ~/.dbt
+        env:
+          DBT_PROFILES_YML: ${{ secrets.DBT_PROFILES_YML }}
+          DBT_USER: ${{ secrets.DBT_USER }}
+          DBT_PASSWORD: ${{ secrets.DBT_PASSWORD }}
+          DBT_ACCOUNT: ${{ secrets.DBT_ACCOUNT }}
+          DBT_DATABASE: ${{ secrets.DBT_DATABASE }}
+          DBT_SCHEMA: ${{ secrets.DBT_SCHEMA }}
+
+      # STEP 5: Failure Notification
+      - name: Notify on failure
+        if: failure()
+        run: echo "dbt run failed!" | mail -s "dbt Run Failed" chrisecoyne@gmail.com
