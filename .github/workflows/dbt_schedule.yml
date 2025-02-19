@@ -25,7 +25,7 @@ jobs:
       - name: Configure dbt profiles
         run: |
           mkdir -p ~/.dbt
-          echo "$DBT_PROFILES_YML" > ~/.dbt/profiles.yml
+          echo "${{ secrets.DBT_PROFILES_YML }}" > ~/.dbt/profiles.yml
 
       - name: Run dbt models
         run: dbt run --profiles-dir ~/.dbt --project-dir dbt_scraper
