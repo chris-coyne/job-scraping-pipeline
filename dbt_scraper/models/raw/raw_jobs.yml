@@ -1,0 +1,3 @@
+models:
+  - name: raw_jobs
+    description: Pulling latest_jobs S3 bucket
