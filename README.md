@@ -136,17 +136,21 @@ This project is a learning experience in data engineering and analytics. Any sug
 **Scheduling DBT**
 - Looked into using Airflow, DBT Cloud, Prefect, and Github Actions for scheduling. For this small of a project, Github Actions is the easiest to set up.
 - Created a workflow in .github/workflows/dbt_schedule.yml -- runs daily at 8am CST
-- Added DBT_PROFILES_YML, DBT_USER, DBT_PASSWORD, DBT_ACCOUNT, DBT_DATABASE, DBT_SCHEMA to secrets in GitHub repo.
+- Added DBT_PROFILES_YML to secrets in GitHub repo.
 
 
 Next Up:
 - [✅] only keep prehook for raw_companies table..parsed shouldn't also go into raw, probably staging
+    - Could also use snowflake copy into command automated with snowflake tasks
+    - Snowpipe for near real-time ingestion
+    - (chosen method) Use external stage for raw data then put into dbt raw models
 - Schedule dbt run
 - Email notification on failure
 - Redo model structure based on dbt best practices
 - For raw models, is there a better way to read in S3 bucket than source lines and parsed CTEs?
 - Eventually move model configs into dbt_project.yml for multiple sources (LinkedIn)
 - [✅] Add run timestamp to models
+- Setup view of data lineage
 
 References
 https://docs.getdbt.com/best-practices/how-we-structure/1-guide-overview

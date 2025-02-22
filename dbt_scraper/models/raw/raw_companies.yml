@@ -1,0 +1,3 @@
+models:
+  - name: raw_companies
+    description: Pulling companies from S3 bucket
