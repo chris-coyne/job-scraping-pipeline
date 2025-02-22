@@ -17,19 +17,16 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-
+          cache: 'pip'
+      
       - name: Install dbt
         run: pip install dbt-core dbt-snowflake
 
       - name: Configure dbt profiles
         run: |
           mkdir -p ~/.dbt
-          echo "${{ secrets.DBT_PROFILES_YML }}" | sed 's/\r$//' > ~/.dbt/profiles.yml
-
-      - name: Debug dbt profiles
-        run: cat ~/.dbt/profiles.yml
+          echo "${{ secrets.DBT_PROFILES_YML }}" > ~/.dbt/profiles.yml
+          chmod 600 ~/.dbt/profiles.yml  # Secure the file permissions
 
       - name: Run dbt models
-        run: dbt run --profiles-dir ~/.dbt --project-dir dbt_scraper
-        env:
-          DBT_PROFILES_YML: ${{ secrets.DBT_PROFILES_YML }}
+        run: dbt run --project-dir dbt_scraper
