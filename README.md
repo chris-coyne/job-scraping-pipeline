@@ -134,7 +134,9 @@ This project is a learning experience in data engineering and analytics. Any sug
 - profiles.yml default schema was raw, so every dbt run output into snowflake raw schema. Created generate_schema_names.sql jinja to override this behavior. Not sure if necessary, project.yml error was found, but don't think it hurts anything.
 
 **Scheduling DBT**
-- Looked into using Airflow, DBT Cloud, Prefect, and Github Actions for scheduling. For this small of a project, Github Actions is the easiest to set up.
+- Looked into using Airflow, DBT Cloud, Prefect, Dagster and Github Actions for scheduling. For this small of a project, Github Actions is the easiest to set up.
+    - Airflow may be too complex unless managing DBT and non-DBT tasks (Astronomer Cosmos recommended for DBT Airflow)
+    - Dagster worth looking into, lot of praise seen online. 
 - Created a workflow in .github/workflows/dbt_schedule.yml -- runs daily at 8am CST
 - Added DBT_PROFILES_YML to secrets in GitHub repo.
 
@@ -144,7 +146,7 @@ Next Up:
     - Could also use snowflake copy into command automated with snowflake tasks
     - Snowpipe for near real-time ingestion
     - (chosen method) Use external stage for raw data then put into dbt raw models
-- Schedule dbt run
+- [✅] Schedule dbt run
 - Email notification on failure
 - Redo model structure based on dbt best practices
 - For raw models, is there a better way to read in S3 bucket than source lines and parsed CTEs?
