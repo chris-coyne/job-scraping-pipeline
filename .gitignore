@@ -1,4 +1,4 @@
 lambda_functions/builtin_scraper_lambda_package
-package/
+package_builtin_scraper/
 scrape_env/
 dbt_env/
