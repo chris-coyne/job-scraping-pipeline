@@ -2,7 +2,7 @@ name: Run dbt models on schedule
 
 on:
   schedule:
-    - cron: '0 14 * * *'  # Runs daily at 8 AM CST
+    - cron: '0 14 */2 * *'  # Runs every other day at 8 AM CST
   workflow_dispatch:
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: '3.9'
           cache: 'pip'
-      
+
       - name: Install dbt
         run: pip install dbt-core dbt-snowflake
 
@@ -27,6 +27,14 @@ jobs:
           mkdir -p ~/.dbt
           echo "${{ secrets.DBT_PROFILES_YML }}" > ~/.dbt/profiles.yml
           chmod 600 ~/.dbt/profiles.yml  # Secure the file permissions
+
+      - name: Install dbt dependencies
+        run: |
+          rm -rf dbt_packages  # Clear existing dbt packages
+          dbt deps --project-dir dbt_scraper
+
+      - name: Check dbt packages directory
+        run: ls -la dbt_scraper/dbt_packages || echo "dbt_packages not found"
 
       - name: Run dbt models
         run: dbt run --project-dir dbt_scraper
