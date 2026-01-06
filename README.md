@@ -153,6 +153,7 @@ Next Up:
 - Eventually move model configs into dbt_project.yml for multiple sources (LinkedIn)
 - [✅] Add run timestamp to models
 - Setup view of data lineage
+- Testing setup on new mac
 
 References
 https://docs.getdbt.com/best-practices/how-we-structure/1-guide-overview
